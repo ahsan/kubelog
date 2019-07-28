@@ -7,6 +7,7 @@
     "@types/jest": "24.0.15",
     "@types/node": "12.6.8",
     "@types/react-dom": "16.8.5",
+    "isomorphic-ws": "^4.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
@@ -35,6 +36,7 @@
     ]
   },
   "devDependencies": {
-    "@types/react": "^16.8.23"
+    "@types/react": "^16.8.23",
+    "@types/ws": "^6.0.1"
   }
 }
