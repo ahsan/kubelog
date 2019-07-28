@@ -27,9 +27,10 @@ class WithWS extends React.Component<WithWSProps, WithWSState> {
     }
     
     ws.onmessage = (data: { data: WebSocket.Data; type: string; target: WebSocket }) => {
-      const message = '' + data.data;
+      const msg = '' + data.data;
+      const log = { msg }
       this.setState({
-        logs: [ ...this.state.logs, message ]
+        logs: [ ...this.state.logs, log ]
       });
       console.log('length: ', this.state.logs.length);
     }
