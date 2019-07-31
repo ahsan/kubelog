@@ -10,9 +10,20 @@ export type LogsTableProps = {
   logs: Log[];
 }
 
-class LogsTable extends React.Component<LogsTableProps> {
+type LogsTableState = {
+  tableWidth: number;
+}
+
+class LogsTable extends React.Component<LogsTableProps, LogsTableState> {
+  
+  tableContainer: React.RefObject<any>;
+
   constructor(props: LogsTableProps) {
     super(props);
+    this.tableContainer = React.createRef();
+    this.state = {
+      tableWidth: 0,
+    };
   }
 
   getRow({index}: {index: number}) {
@@ -21,22 +32,29 @@ class LogsTable extends React.Component<LogsTableProps> {
     return this.props.logs[index];
   }
 
+  componentDidMount() {
+    const tableWidth = this.tableContainer.current.clientWidth;
+    this.setState({ tableWidth });
+  }
+
   render() {
     console.log(this.props.logs.length);
     return (
       <React.Fragment>
         {
-          <Paper style={{
-            width: '100%',
-            height: '100%',
-            scrollBehavior: 'auto',
-          }}>
+          <Paper 
+            ref={this.tableContainer}
+            style={{
+              width: '100%',
+              height: '100%',
+              scrollBehavior: 'auto',
+            }}>
             <VirtualizedTable
             rowCount={this.props.logs.length}
             rowGetter={({index}) => this.props.logs[index]}
             columns={[
               {
-                width: 1000,
+                width: this.state.tableWidth,
                 label: 'Message',
                 dataKey: 'msg'
               }
