@@ -1,0 +1,19 @@
+version: '3'
+services:
+  server:
+    container_name: kubelog-server
+    image: kubelog-server:latest
+    build:
+      context: ./server/
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    stdin_open: true
+  webapp:
+    container_name: kubelog-webapp
+    image: kubelog-webapp:latest
+    build:
+      context: ./webapp/
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
