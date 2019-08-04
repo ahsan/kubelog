@@ -6,7 +6,6 @@ export const initServer = () => {
   // create a new server
   console.log('Creating a WS server.');
   server = new ws.Server({ 
-    host: 'localhost',
     port: 8080
   });
 
@@ -17,7 +16,7 @@ export const initServer = () => {
     });
 
     console.log('Sending message.');
-    ws.send('something');
+    ws.send('<Connected>');
   });
 }
 
