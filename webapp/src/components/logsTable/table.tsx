@@ -1,6 +1,7 @@
 import React from 'react';
 import { VirtualizedTable } from '../virtualized.table';
 import { Paper } from '@material-ui/core';
+import { CVList } from '../collapsibleVirtualizedList/collapsible.virtualized.list';
 
 // TODO: move logs type definition to a common base module, outside of webapp.
 export type Log = {
@@ -49,7 +50,7 @@ class LogsTable extends React.Component<LogsTableProps, LogsTableState> {
               height: '100%',
               scrollBehavior: 'auto',
             }}>
-            <VirtualizedTable
+            {/* <VirtualizedTable
             rowCount={this.props.logs.length}
             rowGetter={({index}) => this.props.logs[index]}
             columns={[
@@ -59,8 +60,14 @@ class LogsTable extends React.Component<LogsTableProps, LogsTableState> {
                 dataKey: 'msg'
               }
             ]}
-
-          />
+            /> */}
+            <CVList
+              listDataSource={[
+                { lines: ['first log header', 'first first', 'first second', 'first third'] },
+                { lines: ['second log header', 'second first', 'second second', 'second third'] },
+                { lines: ['third log header', 'third first', 'third second', 'third third'] },
+              ]}
+            />
           </Paper>
         }
       </React.Fragment>
