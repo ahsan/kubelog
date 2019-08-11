@@ -38,8 +38,17 @@ class LogsTable extends React.Component<LogsTableProps, LogsTableState> {
     this.setState({ tableWidth });
   }
 
+  createMockData() {
+    const arr = [];
+    for (let i=0; i<1000; i++) {
+      arr.push({ lines: [`${i}----------`, 'first first', 'first second', 'first third'] })
+    }
+    return arr;
+  }
+
   render() {
     console.log(this.props.logs.length);
+    const arr = this.createMockData();
     return (
       <React.Fragment>
         {
@@ -62,11 +71,7 @@ class LogsTable extends React.Component<LogsTableProps, LogsTableState> {
             ]}
             /> */}
             <CVList
-              listDataSource={[
-                { lines: ['first log header', 'first first', 'first second', 'first third'] },
-                { lines: ['second log header', 'second first', 'second second', 'second third'] },
-                { lines: ['third log header', 'third first', 'third second', 'third third'] },
-              ]}
+              listDataSource={arr}
             />
           </Paper>
         }

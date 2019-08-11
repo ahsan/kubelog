@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AutoSizer, List, Index, ListRowProps } from 'react-virtualized';
 
 const LINE_HEIGHT=24;
-const OVERSCAN_ROWS_COUNT=10;
+const OVERSCAN_ROWS_COUNT=100;
 type Row = {
   lines: string[];
 }
@@ -40,21 +40,22 @@ export class CVList extends React.Component<CVListProps, CVListState> {
         ...this.state.rowHeightsMap,
         [index]: newHeight,
       }
+    }, () => {
+      if (this.listRef) {
+        this.listRef.recomputeRowHeights()
+        this.listRef.forceUpdate();
+      } else {
+        console.error('listRef is null');
+      }
     });
-    if (this.listRef) {
-      this.listRef.recomputeRowHeights();
-      // this.listRef.forceUpdateGrid();
-    } else {
-      console.error('listRef is null');
-    }
   }
 
   rowRenderer(listRowProps: ListRowProps) {
-    const { index } = listRowProps;
+    const { index, style } = listRowProps;
     return (
       <CVListRow
-        key={index}
         index={index}
+        style={style}
         lineHeight={LINE_HEIGHT}
         onRowHeightChange={(i, h) => this.onRowHeightChange(i, h)}
         lines={this.props.listDataSource[index].lines}
@@ -96,6 +97,7 @@ type CVListRowProps = Row & {
   index: number;
   lineHeight: number;
   onRowHeightChange: (index: number, newHeight: number) => void;
+  style: React.CSSProperties;
 };
 type CVListRowState = {
   isExpanded: boolean;
@@ -125,23 +127,11 @@ class CVListRow extends React.Component<CVListRowProps, CVListRowState> {
     this.setState({
       isExpanded: !this.state.isExpanded,
     }, () => {
-      this.props.onRowHeightChange(this.props.index, this.getRowHeight());
+      const { lines: { length }, lineHeight } = this.props;
+      const { isExpanded } = this.state;
+      const height = isExpanded ? length * lineHeight : lineHeight;
+      this.props.onRowHeightChange(this.props.index, height);
     });
-  }
-
-  getRowHeight(): number {
-    return this.state.isExpanded ? 
-    this.props.lines.length * this.props.lineHeight :
-    this.props.lineHeight;
-  }
-
-  renderLine(key: any, line: string, onClickHandler: RowOnClickHandler | undefined = undefined) {
-    const color = this.state.isExpanded ? 'cyan' : 'gray';
-    return (
-      <div onClick={onClickHandler} key={key} style={{'backgroundColor': color}}>
-        {line}
-      </div>
-    );
   }
 
   lineRender(line: string, index: number) {
@@ -155,7 +145,7 @@ class CVListRow extends React.Component<CVListRowProps, CVListRowState> {
 
   render() {
     return (
-      <div key={this.props.index}>
+      <div key={this.props.index} style={this.props.style}>
         {
           this.state.isExpanded ?
           this.props.lines.map(this.lineRender.bind(this)) :
