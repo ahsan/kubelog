@@ -71,6 +71,17 @@ export class CVList extends React.Component<CVListProps, CVListState> {
     }
   }
 
+  scrollToLastRow() {
+    const index = this.props.listDataSource.length - 1;
+    if (this.listRef) {
+      this.listRef.scrollToRow(index);
+    }
+  }
+
+  componentDidUpdate() {
+    this.scrollToLastRow();
+  }
+
   render() {
     return (
       <AutoSizer>

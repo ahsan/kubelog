@@ -32,7 +32,6 @@ class WithWS extends React.Component<WithWSProps, WithWSState> {
       this.setState({
         logs: [ ...this.state.logs, log ]
       });
-      console.log('length: ', this.state.logs.length);
     }
   }
 
