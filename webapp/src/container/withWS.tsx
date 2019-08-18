@@ -1,6 +1,9 @@
 import React from 'react';
 import WebSocket from 'isomorphic-ws';
 import { LogsTableProps } from '../components/logsTable/table';
+import { Line, Row } from '../../../shared/log.types';
+
+export const HEADER_CHAR_LIMIT = 50;
 
 type WithWSProps = {
   render: (logs: LogsTableProps) => React.ReactNode
@@ -13,8 +16,8 @@ class WithWS extends React.Component<WithWSProps, WithWSState> {
     super(props);
 
     this.state = {
-      logs: []
-    }
+      rows: []
+    };
 
     const ws = new WebSocket('ws://localhost:8080');
     
@@ -27,19 +30,36 @@ class WithWS extends React.Component<WithWSProps, WithWSState> {
     }
     
     ws.onmessage = (data: { data: WebSocket.Data; type: string; target: WebSocket }) => {
-      const msg = '' + data.data;
-      const log = { msg }
-      this.setState({
-        logs: [ ...this.state.logs, log ]
-      });
+      const line = data.data as Line;
+      const header = this.getHeaderSlice(line);
+      let row: Row = { header, lines: [] };
+      try {
+        const lineJson = JSON.parse(line);
+        const lines = JSON.stringify(lineJson, null, 2).split('\n');
+        row = { lines, header };
+      } catch (err) {
+        row = { header, lines: [line] };
+      } finally {
+        this.setState({
+          rows: [ ...this.state.rows, row ],
+        });
+      }
     }
+  }
+
+  getHeaderSlice(line: string) {
+    const len = line.length;
+    let header = line.slice(0, HEADER_CHAR_LIMIT);
+    return len > HEADER_CHAR_LIMIT ?
+    header + '...' :
+    header;
   }
 
   render() {
     return (
       <React.Fragment>
         {this.props.render({
-          logs: this.state.logs
+          rows: this.state.rows
         })}
       </React.Fragment>
     );

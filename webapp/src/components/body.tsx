@@ -8,7 +8,7 @@ class Body extends React.Component {
       <React.Fragment>
         {
           <WithWS render={
-            ({logs}) => <LogsTable logs={logs}/>
+            ({rows}) => <LogsTable rows={rows}/>
           }/>
         }
       </React.Fragment>
