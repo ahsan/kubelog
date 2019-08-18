@@ -17,6 +17,7 @@ type CVListState = {
 
 export class CVList extends React.Component<CVListProps, CVListState> {
   listRef: (List | null) = null;
+  rowIsExpandedMap: { [index: number]: boolean } = {};
 
   constructor(props: CVListProps) {
     super(props);
@@ -48,16 +49,27 @@ export class CVList extends React.Component<CVListProps, CVListState> {
     });
   }
 
+  getRowIsExpanded(index: number) {
+    return !!this.rowIsExpandedMap[index];
+  }
+
+  onRowExpansionToggle(index: number) {
+    this.rowIsExpandedMap[index] = !this.getRowIsExpanded(index);
+  }
+
   rowRenderer(listRowProps: ListRowProps) {
     const { index, style } = listRowProps;
     return (
       <CVListRow
+        key={index}
         index={index}
         style={style}
         lineHeight={LINE_HEIGHT}
         onRowHeightChange={(i, h) => this.onRowHeightChange(i, h)}
         lines={this.props.listDataSource[index].lines}
         header={this.props.listDataSource[index].header}
+        onRowExpansionToggle={(i) => this.onRowExpansionToggle(i)}
+        isExpanded={this.getRowIsExpanded(index)}
       />
     );
   }
@@ -107,13 +119,10 @@ type CVListRowProps = Row & {
   index: number;
   lineHeight: number;
   onRowHeightChange: (index: number, newHeight: number) => void;
+  onRowExpansionToggle: (index: number) => void;
   style: React.CSSProperties;
-};
-type CVListRowState = {
   isExpanded: boolean;
 };
-
-type RowOnClickHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => any;
 
 /**
  * A CVListRow is:
@@ -121,27 +130,18 @@ type RowOnClickHandler = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) =
  * - In collapsed state, it only shows the header line
  * - In un-collapsed state, it shows all the lines
  */
-class CVListRow extends React.Component<CVListRowProps, CVListRowState> {
+class CVListRow extends React.Component<CVListRowProps> {
 
   constructor(props: CVListRowProps) {
     super(props);
   }
 
-  componentWillMount() {
-    this.setState({
-      isExpanded: false,
-    });
-  }
-
   toggleExpanded(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    this.setState({
-      isExpanded: !this.state.isExpanded,
-    }, () => {
-      const { lines: { length }, lineHeight } = this.props;
-      const { isExpanded } = this.state;
-      const height = isExpanded ? length * lineHeight : lineHeight;
-      this.props.onRowHeightChange(this.props.index, height);
-    });
+    this.props.onRowExpansionToggle(this.props.index);
+    const { lines: { length }, lineHeight } = this.props;
+    const { isExpanded } = this.props;
+    const height = !isExpanded ? length * lineHeight : lineHeight;
+    this.props.onRowHeightChange(this.props.index, height);
   }
 
   lineRender(line: string, index: number) {
@@ -157,7 +157,7 @@ class CVListRow extends React.Component<CVListRowProps, CVListRowState> {
     return (
       <div key={this.props.index} style={this.props.style}>
         {
-          this.state.isExpanded ?
+          this.props.isExpanded ?
           this.props.lines.map(this.lineRender.bind(this)) :
           this.lineRender.bind(this)(this.props.header, 0)
         }
