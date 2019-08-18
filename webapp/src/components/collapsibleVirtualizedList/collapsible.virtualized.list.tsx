@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { AutoSizer, List, Index, ListRowProps } from 'react-virtualized';
+import { Row } from '../../../../shared/log.types';
 
 const LINE_HEIGHT=24;
 const OVERSCAN_ROWS_COUNT=100;
-type Row = {
-  lines: string[];
-}
 
 type CVListProps = {
   listDataSource: Row[];
@@ -59,6 +57,7 @@ export class CVList extends React.Component<CVListProps, CVListState> {
         lineHeight={LINE_HEIGHT}
         onRowHeightChange={(i, h) => this.onRowHeightChange(i, h)}
         lines={this.props.listDataSource[index].lines}
+        header={this.props.listDataSource[index].header}
       />
     );
   }
@@ -160,7 +159,7 @@ class CVListRow extends React.Component<CVListRowProps, CVListRowState> {
         {
           this.state.isExpanded ?
           this.props.lines.map(this.lineRender.bind(this)) :
-          this.props.lines.slice(0, 1).map(this.lineRender.bind(this))
+          this.lineRender.bind(this)(this.props.header, 0)
         }
       </div>
     );

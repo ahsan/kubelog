@@ -1,13 +1,10 @@
 import React from 'react';
 import { Paper } from '@material-ui/core';
 import { CVList } from '../collapsibleVirtualizedList/collapsible.virtualized.list';
+import { Row } from '../../../../shared/log.types';
 
-// TODO: move logs type definition to a common base module, outside of webapp.
-export type Log = {
-  msg: string
-}
 export type LogsTableProps = {
-  logs: Log[];
+  rows: Row[];
 }
 
 type LogsTableState = {
@@ -26,27 +23,13 @@ class LogsTable extends React.Component<LogsTableProps, LogsTableState> {
     };
   }
 
-  getRow({index}: {index: number}) {
-    const {msg} = this.props.logs[index];
-    return this.props.logs[index];
-  }
-
   componentDidMount() {
     const tableWidth = this.tableContainer.current.clientWidth;
     this.setState({ tableWidth });
   }
 
-  createMockData() {
-    const arr = [];
-    for (let i=0; i<1000; i++) {
-      arr.push({ lines: [`${i}----------`, 'first first', 'first second', 'first third'] })
-    }
-    return arr;
-  }
-
   render() {
-    // TODO: move type conversion to server-side
-    const listDataSource = this.props.logs.map(l => ({ lines: [l.msg] }));
+    const listDataSource = this.props.rows;
     return (
       <React.Fragment>
         {
