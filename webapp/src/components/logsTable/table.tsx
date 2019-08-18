@@ -1,6 +1,6 @@
 import React from 'react';
-import { VirtualizedTable } from '../virtualized.table';
 import { Paper } from '@material-ui/core';
+import { CVList } from '../collapsibleVirtualizedList/collapsible.virtualized.list';
 
 // TODO: move logs type definition to a common base module, outside of webapp.
 export type Log = {
@@ -28,7 +28,6 @@ class LogsTable extends React.Component<LogsTableProps, LogsTableState> {
 
   getRow({index}: {index: number}) {
     const {msg} = this.props.logs[index];
-    console.log(`For ${index}: `, msg);
     return this.props.logs[index];
   }
 
@@ -37,8 +36,17 @@ class LogsTable extends React.Component<LogsTableProps, LogsTableState> {
     this.setState({ tableWidth });
   }
 
+  createMockData() {
+    const arr = [];
+    for (let i=0; i<1000; i++) {
+      arr.push({ lines: [`${i}----------`, 'first first', 'first second', 'first third'] })
+    }
+    return arr;
+  }
+
   render() {
-    console.log(this.props.logs.length);
+    // TODO: move type conversion to server-side
+    const listDataSource = this.props.logs.map(l => ({ lines: [l.msg] }));
     return (
       <React.Fragment>
         {
@@ -49,18 +57,9 @@ class LogsTable extends React.Component<LogsTableProps, LogsTableState> {
               height: '100%',
               scrollBehavior: 'auto',
             }}>
-            <VirtualizedTable
-            rowCount={this.props.logs.length}
-            rowGetter={({index}) => this.props.logs[index]}
-            columns={[
-              {
-                width: this.state.tableWidth,
-                label: 'Message',
-                dataKey: 'msg'
-              }
-            ]}
-
-          />
+            <CVList
+              listDataSource={listDataSource}
+            />
           </Paper>
         }
       </React.Fragment>
