@@ -1,0 +1,21 @@
+.Row {
+  /* background-color: lightblue; */
+  border-bottom: 1px #44444430 solid;
+  padding-left: 5px;
+  padding-right: 5px;
+  display: flex;
+  flex-direction: row;
+}
+
+.Text {
+  text-overflow: ellipsis;
+  margin-left: 3px;
+}
+
+.Clickable {
+  cursor: pointer;
+}
+
+.ExpandIcon {
+  color: lightgray;
+}

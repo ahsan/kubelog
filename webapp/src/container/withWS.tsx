@@ -3,8 +3,6 @@ import WebSocket from 'isomorphic-ws';
 import { LogsTableProps } from '../components/logsTable/table';
 import { Line, Row } from '../../../shared/log.types';
 
-export const HEADER_CHAR_LIMIT = 50;
-
 type WithWSProps = {
   render: (logs: LogsTableProps) => React.ReactNode
 }
@@ -31,7 +29,7 @@ class WithWS extends React.Component<WithWSProps, WithWSState> {
     
     ws.onmessage = (data: { data: WebSocket.Data; type: string; target: WebSocket }) => {
       const line = data.data as Line;
-      const header = this.getHeaderSlice(line);
+      const header = line;
       let row: Row = { header, lines: [] };
       try {
         const lineJson = JSON.parse(line);
@@ -45,14 +43,6 @@ class WithWS extends React.Component<WithWSProps, WithWSState> {
         });
       }
     }
-  }
-
-  getHeaderSlice(line: string) {
-    const len = line.length;
-    let header = line.slice(0, HEADER_CHAR_LIMIT);
-    return len > HEADER_CHAR_LIMIT ?
-    header + '...' :
-    header;
   }
 
   render() {

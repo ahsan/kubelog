@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { Row } from '../../../../shared/log.types';
+import './collapsible.row.css';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 type CVListRowProps = Row & {
   index: number;
@@ -33,7 +36,7 @@ export class CVListRow extends React.Component<CVListRowProps> {
   lineRender(line: string, index: number) {
     const key = `${this.props.index}_${index}`;
     return (
-      <div onClick={this.toggleExpanded.bind(this)} key={key}>
+      <div key={key}>
         {line}
       </div>
     );
@@ -41,12 +44,26 @@ export class CVListRow extends React.Component<CVListRowProps> {
 
   render() {
     return (
-      <div key={this.props.index} style={this.props.style}>
-        {
-          this.props.isExpanded ?
-          this.props.lines.map(this.lineRender.bind(this)) :
-          this.lineRender.bind(this)(this.props.header, 0)
-        }
+      <div key={this.props.index} style={this.props.style} className={'RowWrapper'}>
+        <div className={'Row'}>
+          <span className={'Clickable ExpandIcon'} onClick={this.toggleExpanded.bind(this)}>
+            {
+              !this.props.isExpanded &&
+              <ChevronRightIcon/>
+            }
+            {
+              this.props.isExpanded &&
+              <KeyboardArrowDownIcon/>
+            }
+          </span>
+          <div className={'Text'}>
+            {
+              this.props.isExpanded ?
+              this.props.lines.map(this.lineRender.bind(this)) :
+              this.lineRender.bind(this)(this.props.header, 0)
+            }
+          </div>
+        </div>
       </div>
     );
   }
